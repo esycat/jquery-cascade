@@ -1,0 +1,495 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html
+	PUBLIC "-//W3C//DTD XHTML 1.1 Strict//EN"
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	  xml:lang="en"
+	  lang="en">
+	<head>
+
+		<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.2.6/jquery.js"></script>
+        <script type="text/javascript" src="jquery.cascade.js"></script>            
+        <script type="text/javascript" src="jquery.cascade.ext.js"></script> 
+        <script type="text/javascript" src="jquery.templating.js"></script> 
+
+		<script type="text/javascript">
+			var list1 = [
+				{'When':'A','Value':'A1','Text':'A1'},
+				{'When':'A','Value':'A2','Text':'A2'},
+				{'When':'A','Value':'A3','Text':'A3'},
+				{'When':'A','Value':'A4','Text':'A4'},
+				{'When':'B','Value':'B1','Text':'B1'},
+				{'When':'B','Value':'B2','Text':'B2'},
+				{'When':'B','Value':'B3','Text':'B3'},
+				{'When':'B','Value':'B4','Text':'B4'},
+				{'When':'C','Value':'C1','Text':'C1'},
+				{'When':'C','Value':'C2','Text':'C2'},
+				{'When':'D','Value':'D1','Text':'D1'},
+				{'When':'D','Value':'D2','Text':'D2'}
+				];
+			var list2 = [
+				{'When':'A1','Value':'W','Text':'SubchildA1a'},
+				{'When':'A1','Value':'X','Text':'SubchildA1b'},
+				{'When':'A2','Value':'Y','Text':'SubchildA2a'},
+				{'When':'A2','Value':'Z','Text':'SubchildA2b'},
+				{'When':'B1','Value':'W','Text':'SubchildB1a'},
+				{'When':'B1','Value':'X','Text':'SubchildB1b'},
+				{'When':'B2','Value':'Y','Text':'SubchildB2a'},
+				{'When':'B2','Value':'Z','Text':'SubchildB2b'},
+				{'When':'C1','Value':'W','Text':'SubchildC1a'},
+				{'When':'C1','Value':'X','Text':'SubchildC1b'},
+				{'When':'C2','Value':'Y','Text':'SubchildC2a'},
+				{'When':'C2','Value':'Z','Text':'SubchildC2b'},
+				{'When':'D1','Value':'W','Text':'SubchildD1a'},
+				{'When':'D1','Value':'X','Text':'SubchildD1b'},
+				{'When':'D2','Value':'Y','Text':'SubchildD2a'},
+				{'When':'D2','Value':'Z','Text':'SubchildD2b'}				
+				];	
+			
+			function commonTemplate(item) {
+				return "<option value='" + item.Value + "'>" + item.Text + "</option>"; 
+			};
+			function commonTemplate2(item) {
+				return "<option value='" + item.Value + "'>***" + item.Text + "***</option>"; 
+			};
+			
+			function commonMatch(selectedValue) {
+				return this.When == selectedValue; 
+			};
+			
+		</script>
+		
+		<style type="text/css">
+			.cascade-loading  	
+			{																		
+				background: transparent url("indicator.gif") no-repeat center; 					
+			}
+		</style>
+	</head>
+	<body>
+
+	<h1>Cascade Plugin Demo</h1>
+	<p>View Source to see usage</p>
+		
+	<h2>Simple</h2>
+	<div>
+		<label>Parent
+			<select id="simple">
+				<option value="A">A</option>
+				<option value="B">B</option>
+				<option value="C">C</option>
+				<option value="D">D</option>
+			</select>
+		</label>
+		<label>Child
+			<select id="simple_child">
+				<option value='nope1'>I am not deleted on ready()</option>
+				<option value='nope2'>Neither Am I</option>
+			</select>
+		</label>
+	</div>
+	<script type="text/javascript">
+		jQuery(document).ready(function()
+		{	
+			jQuery("#simple_child").cascade("#simple",{					
+				list: list1,			
+				template: commonTemplate,
+				match: commonMatch 			
+			});
+		});
+	</script>
+	
+	<h2 id="ajax_header">Simple Ajax (in ext)</h2>
+	<p>Passes selected value of parent select to url as 'val=', but accepts the full ajax options hash so you can append other data as well</p>
+	<div>
+		<label>Parent
+			<select id="simple_ajax">
+				<option value="A">A</option>
+				<option value="B">B</option>
+				<option value="C">C</option>
+				<option value="D">D</option>
+			</select>
+		</label>
+		<label>Child
+			<select id="simple_ajax_child">
+			</select>
+		</label>
+	</div>
+	<script type="text/javascript">
+		jQuery(document).ready(function()
+		{	
+			jQuery("#simple_ajax_child").cascade("#simple_ajax",{						
+				ajax: { 
+					url: 'data.js', 
+					complete: function(){ 
+						alert('my list is updated'); 
+					},
+					data: { myotherdata: jQuery("#ajax_header").html() }
+			    },				
+				template: commonTemplate,
+				match: commonMatch  			
+			});
+		});
+	</script>
+	
+	<h2>Chained</h2>
+	<div>
+		<label>Parent
+			<select id="chained">
+				<option value="A">A</option>
+				<option value="B">B</option>
+				<option value="C">C</option>
+				<option value="D">D</option>
+			</select>
+		</label>
+		<label>Child
+			<select id="chained_child">
+			</select>
+		</label>
+		<label>SubChild
+			<select id="chained_sub_child">
+			</select>
+		</label>
+	</div>
+	<script type="text/javascript">
+		jQuery(document).ready(function()
+		{	
+			jQuery("#chained_child").cascade("#chained",{					
+				ajax: {url: 'data.js' },				
+				template: commonTemplate,
+				match: commonMatch 
+			});
+			jQuery("#chained_sub_child").cascade("#chained_child",{					
+				list: list2,
+				template: commonTemplate,
+				match: commonMatch 
+			});
+		});
+	</script>
+	
+	<h2>Update More Than One Child, each with their own datasource</h2>	
+	<div>
+		<label>Parent
+			<select id="morethanone">
+				<option value="A">A</option>
+				<option value="B">B</option>
+				<option value="C">C</option>
+				<option value="D">D</option>
+			</select>
+		</label>
+		<label>Child
+			<select id="morethanone_child">
+			</select>
+		</label>
+		<label>Other Child
+			<select id="morethanone_other_child">
+			</select>
+		</label>
+	</div>
+	<script type="text/javascript">
+		jQuery(document).ready(function()
+		{	
+			jQuery("#morethanone_child")
+			.cascade("#morethanone",{					
+				ajax: {url: 'data2.js' },				
+				template: commonTemplate,
+				match: commonMatch 
+			});
+			jQuery("#morethanone_other_child")
+			.cascade("#morethanone",{
+				ajax: {url: 'data.js' },				
+				template: commonTemplate2,
+				match: commonMatch 
+			});			
+		});
+	</script>
+	
+	<h2>First Option (ext)</h2>
+	<div>
+		<p>Binds to 'loaded.cascade' event and provides opportunity to manipulate</p>
+		<label>Parent
+			<select id="optional">
+				<option value="A">A</option>
+				<option value="B">B</option>
+				<option value="C">C</option>
+				<option value="D">D</option>
+			</select>
+		</label>
+		<label>Child as optional and custom first option
+			<select id="optional_child">
+			</select>
+		</label>
+	</div>
+	<script type="text/javascript">
+		jQuery(document).ready(function()
+		{	
+			jQuery("#optional_child").cascade("#optional",{						
+				list: list1,			
+				template: commonTemplate,
+				match: commonMatch 
+			})
+			.bind("loaded.cascade",function(e,target) { 
+				jQuery(this).prepend("<option value='empty' selected='true'>--Select--</option>");
+				jQuery(this).find("option:first")[0].selected = true;
+			});
+		});
+	</script>
+	
+	<h2>With Longer Timeout (to show indicator)</h2>
+	<div>
+		<label>Parent
+			<select id="loading">
+				<option value="A">A</option>
+				<option value="B">B</option>
+				<option value="C">C</option>
+				<option value="D">D</option>
+			</select>
+		</label>
+		<label>Child
+			<select id="loading_child">
+			</select>
+		</label>
+	</div>
+	<script type="text/javascript">
+		jQuery(document).ready(function()
+		{	
+			jQuery("#loading_child").cascade("#loading",{						
+				list: list1,
+				template: commonTemplate,
+				match: commonMatch,
+				timeout: 400 //just to show loading indicator				
+			});
+		});
+	</script>
+	
+	<h2>Using Template Plugin</h2>
+	<p>Cascades into a &lt;/div&gt; element and uses the 'loaded.cascade' event to wrap the inner text .
+	<div>
+		<label>Parent
+			<select id="templated">
+				<option value="A">A</option>
+				<option value="B">B</option>
+				<option value="C">C</option>
+				<option value="D">D</option>
+			</select>
+		</label>
+		
+		<div id="templated_target"></div>		
+	</div>
+	<script type="text/javascript">
+		jQuery(document).ready(function()
+		{	
+			jQuery("#templated_target").cascade("#templated",{						
+				list: list1,				
+				templateText: "<li>When '<%= When %>' Then Value Of Target Is '<%= Value %>' And Text Is '<%= Text %>'.</li>",												
+				match: commonMatch							
+			})			
+			.bind("loaded.cascade",function(e,parent){ jQuery(this).wrapInner("<ul></ul>"); });
+		});
+	</script>
+	
+	<h2>TextBox Cascades Too</h2>
+	<p>Enter 'A','B','C', or 'D' below</p>
+	<p>You don't have to use a select form. Any form which triggers an 'change' event will work...though obviously there are problems with just using a text box. :) 
+		Additionally, you may specify which event triggers the cascade. This text box cascades on its blur event.
+	</p>
+	<div>
+		<label>Parent
+			<input type='text' id="any" />			
+		</label>
+		<label>Child
+			<select id="any_child">
+			</select>
+		</label>
+	</div>
+	<script type="text/javascript">
+		jQuery(document).ready(function()
+		{	
+			jQuery("#any_child").cascade("#any",{					
+				list: list1,			
+				template: commonTemplate,
+				match: commonMatch,
+				event: "blur"
+			});
+		});
+	</script>
+
+	<h2>Accepts getParentValue for delegating value fetching </h2>
+	<div>
+		<label>Parent
+			<select id="simple2">
+				<option value="A">A</option>
+				<option value="B">B</option>
+				<option value="C">C</option>
+				<option value="D">D</option>
+			</select>
+		</label>
+		<label>Child
+			<select id="simple2_child">
+			</select>
+		</label>
+	</div>
+	<script type="text/javascript">
+		jQuery(document).ready(function()
+		{	
+			jQuery("#simple2_child").cascade("#simple2",{					
+				list: list1,			
+				template: commonTemplate,
+				match: function (selectedValue) { return this.When + '-xtra' == selectedValue;},
+				getParentValue: function(parent){ return jQuery(parent).val() + '-xtra'; }	
+			});
+		});
+	</script>
+	
+	<h2>Multiselect updates too</h3>
+	<div>
+		<label>Multiselect
+			<select id="multiparent" multiple>
+				<option value="A">A</option>
+				<option value="B">B</option>
+				<option value="C">C</option>
+				<option value="D">D</option>
+			</select>
+		</label>
+		<label>Child
+			<select id="multichild">
+			</select>
+		</label>
+	</div>
+	
+	<script type="text/javascript">
+		jQuery(function(){
+			jQuery("#multichild").cascade("#multiparent",{
+				ajax: { url: 'data.js' }, 
+				template: commonTemplate,
+				match: function(selectedValue) {
+					var when = this.When;
+					var matches = false;
+					jQuery.each(jQuery.makeArray(selectedValue),function(){						
+						if(this == when) {							
+							matches = true;
+							return false;
+						}
+						
+					});
+					return matches;
+				}
+			});
+		});
+	</script>
+	
+	<h2>Accessing Siblings</h2>
+	<table id="siblings">
+		<thead>
+			<tr>
+				<td>Col1</td>
+				<td>Col2</td>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<td>
+					<div class="container-1">
+						<label>Parent
+							<select>
+								<option value="A">A</option>
+								<option value="B">B</option>
+								<option value="C">C</option>
+								<option value="D">D</option>
+							</select>
+						</label>
+					</div>
+					<div class="container-2">
+						<label>Child
+							<select>
+							</select>
+						</label>
+					</div>
+				</td>
+				<td>&nbsp;</td>
+			</tr>
+			<tr>
+				<td>
+					<div class="container-1">
+						<label>Parent
+							<select>
+								<option value="A">A</option>
+								<option value="B">B</option>
+								<option value="C">C</option>
+								<option value="D">D</option>
+							</select>
+						</label>
+					</div>
+					<div class="container-2">
+						<label>Child
+							<select>
+							</select>
+						</label>
+					</div>
+				</td>
+				<td>&nbsp;</td>
+			</tr>
+			<tr>
+				<td>
+					<div class="container-1">
+						<label>Parent
+							<select>
+								<option value="A">A</option>
+								<option value="B">B</option>
+								<option value="C">C</option>
+								<option value="D">D</option>
+							</select>
+						</label>
+					</div>
+					<div class="container-2">
+						<label>Child
+							<select>
+							</select>
+						</label>
+					</div>
+				</td>
+				<td>&nbsp;</td>
+			</tr>
+			<tr>
+				<td>
+					<div class="container-1">
+						<label>Parent
+							<select>
+								<option value="A">A</option>
+								<option value="B">B</option>
+								<option value="C">C</option>
+								<option value="D">D</option>
+							</select>
+						</label>
+					</div>
+					<div class="container-2">
+						<label>Child
+							<select>
+							</select>
+						</label>
+					</div>
+				</td>
+				<td>&nbsp;</td>
+			</tr>
+		</tbody>
+	</table>
+	
+	<script type="text/javascript">
+		var opts = {
+				ajax: {url: 'data2.js' },				
+				template: commonTemplate,
+				match: commonMatch 
+		};
+		jQuery(document).ready(function()
+		{	
+			jQuery(".container-2 select").each(function() {
+				var child = jQuery(this);
+				child.parents(".container-2:first").siblings(".container-1").find("select").each(function() {
+					child.cascade(jQuery(this),opts);					
+				});
+			});			
+			
+		});
+	</script>
+    </body>
+</html>
