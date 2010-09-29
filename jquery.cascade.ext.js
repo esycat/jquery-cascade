@@ -59,7 +59,8 @@
 		$(this)[0].disabled = true;				
 	};
 	$.ui.cascade.event.loaded = function(e,source) { 		
-		$(this)[0].disabled = false;
+		/* Re-enable the dropdown, but only if the parent is not disabled (e.g. by a foreign script). */
+		if (!source.disabled) $(this)[0].disabled = false;
 		$(".cascade-loading").remove();		
 	};
 
