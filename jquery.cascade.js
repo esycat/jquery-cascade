@@ -1,14 +1,16 @@
 /*jquery.cascade.js */
 /*
  * jQuery UI cascade
- * version: 1.1.1 (6/16/2008)
- * @requires: jQuery v1.2 or later
- * adapted from Yehuda Katz, Rein Henrichs autocomplete plugin
- * Dual licensed under the MIT and GPL licenses:
- *   http://www.opensource.org/licenses/mit-license.php
- *   http://www.gnu.org/licenses/gpl.html
  *
- * Copyright 2008 Mike Nichols
+ * Adapted from Yehuda Katz, Rein Henrichs autocomplete plugin.
+ *
+ * @version: 1.3 (2010-12-02)
+ * @requires: jQuery v1.3 or later
+ * @license: http://www.opensource.org/licenses/mit-license.php
+ * @license: http://www.gnu.org/licenses/gpl.html
+ * @copyright 2008 Mike Nichols
+ * @author Mike Nichols
+ * @author Eugene Janusov <esycat@gmail.com>
  */
 
 ;(function($) {
@@ -25,8 +27,8 @@
         list: [], // static list to use as datasource
         timeout: 10, // delay before firing getList operation
         getList: function(select) { $(this).trigger("updateList", [opt.list]); }, // function to fetch datasource
-        template: function(str) { return "<option value='" + str + "'>" + str + "</option>"; }, // applied to each item in datasource
-        match: function(selectedValue) { return true;}, // 'this' is the js object, or the current list item from 'getList'
+        template: function(item) { return "<option value='" + item.value + "'>" + item.text + "</option>"; }, // applied to each item in datasource
+        match: function(selectedValue) { return this.when == selectedValue; }, // 'this' is the js object, or the current list item from 'getList'
         event: "change", // event to listen on parent which fires the cascade
         getParentValue: function(parent) { return $(parent).val(); } // delegate for retrieving the parent element's value
     }, opt);

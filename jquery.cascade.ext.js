@@ -1,14 +1,17 @@
 /*jquery.cascade.ui.ext.js */
 /*
  * jQuery UI cascade
- * version: 1.1 (5/20/2008)
- * @requires: jQuery v1.2 or later
- * adapted from Yehuda Katz, Rein Henrichs autocomplete plugin
- * Dual licensed under the MIT and GPL licenses:
- *   http://www.opensource.org/licenses/mit-license.php
- *   http://www.gnu.org/licenses/gpl.html
- *  depends on templating  plugin if using with templateText
- * Copyright 2008 Mike Nichols
+ *
+ * Adapted from Yehuda Katz, Rein Henrichs autocomplete plugin.
+ * Depends on templating  plugin if using with templateText.
+ *
+ * @version: 1.3 (2010-12-02)
+ * @requires: jQuery v1.3 or later
+ * @license: http://www.opensource.org/licenses/mit-license.php
+ * @license: http://www.gnu.org/licenses/gpl.html
+ * @copyright 2008 Mike Nichols
+ * @author Mike Nichols
+ * @author Eugene Janusov <esycat@gmail.com>
  */
 
 ;(function($) {
