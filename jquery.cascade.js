@@ -16,9 +16,9 @@
   $.ui = $.ui || {}; $.ui.cascade = $.ui.cascade || {};
 
   $.fn.cascade = function(parent, opt) {
-    if ( opt.event ) {
+    if (opt.event) {
         // namespace our event
-        opt.event = opt.event.replace('.cascade', '') + '.cascade';
+        //opt.event = opt.event.replace('.cascade', '') + '.cascade';
     }
 
     opt = $.extend({}, {
@@ -27,7 +27,7 @@
         getList: function(select) { $(this).trigger("updateList", [opt.list]); }, // function to fetch datasource
         template: function(str) { return "<option value='" + str + "'>" + str + "</option>"; }, // applied to each item in datasource
         match: function(selectedValue) { return true;}, // 'this' is the js object, or the current list item from 'getList'
-        event: "change.cascade", // event to listen on parent which fires the cascade
+        event: "change", // event to listen on parent which fires the cascade
         getParentValue: function(parent) { return $(parent).val(); } // delegate for retrieving the parent element's value
     }, opt);
 
@@ -43,6 +43,7 @@
     return this.each(function() {
         var source = $(parent);
         var self = $(this);
+        var curVal = self.val();
 
         // bind any events in extensions to each instance
         if ($.ui.cascade.event) {
@@ -52,6 +53,9 @@
         }
 
         $(source).bind(opt.event, function() {
+            // store current value first of all, even loading event can modify the select element
+            curVal = self.val();
+
             self.trigger("loading.cascade", [source[0]]);
 
             var selectTimeout = $.data(self, "selectTimeout");
@@ -75,6 +79,8 @@
 
             if (list.length) {
                 self.html(list);
+
+                if (curVal != null) self.val(curVal);
             }
 
             self.trigger("loaded.cascade", [source[0]]); // be sure to fire even if there is no data
