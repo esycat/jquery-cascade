@@ -18,19 +18,19 @@
     $.ui.cascade.event = $.ui.cascade.event || {};
 
     $.ui.cascade.ext.ajax = function(opt) {
-        var ajax = opt.ajax;//ajax options hash...not just the url
+        var ajax = opt.ajax; // ajax options hash, not just the url
         return { getList: function(parent) {
             var _ajax = {};
-            var $this = $(this);//child element
+            var $this = $(this); // child element
             var defaultAjaxOptions = {
                 type: "GET",
                 dataType: "json",
                 success: function(json) { $this.trigger("updateList", [json]); },
-                data: $.extend(_ajax.data,ajax.data,{ val: opt.getParentValue(parent) })
+                data: $.extend(_ajax.data, ajax.data, { val: opt.getParentValue(parent) })
             };
-            //overwrite opt.ajax with required props (json,successcallback,data)
-            //this lets us still pass in handling the other ajax callbacks and options
-            $.extend(_ajax,ajax,defaultAjaxOptions);
+            // overwrite opt.ajax with required props (json, successcallback, data)
+            // this lets us still pass in handling the other ajax callbacks and options
+            $.extend(_ajax, ajax, defaultAjaxOptions);
 
             $.ajax(_ajax);
         } };
@@ -45,20 +45,20 @@
     /*
     * CSS: .cascade-loading: { background: transparent url("${staticDir}/Content/images/indicator.gif") no-repeat center; }
     */
-    $.ui.cascade.event.loading = function(e,source) {
+    $.ui.cascade.event.loading = function(e, source) {
         $(this).empty();
         var position = {
-            'z-index':'6000',
-            'position':'absolute',
-            'width':'16px'
+            'z-index': '6000',
+            'position': 'absolute',
+            'width': '16px'
         };
-        $.extend(position,$(this).offset());
+        $.extend(position, $(this).offset());
         position.top = position.top + 3;
         position.left = position.left + 3;
         $("<div class='cascade-loading'>&nbsp;</div>").appendTo("body").css(position);
         $(this)[0].disabled = true;
     };
-    $.ui.cascade.event.loaded = function(e,source) {
+    $.ui.cascade.event.loaded = function(e, source) {
         /* Re-enable the dropdown, but only if the parent is not disabled (e.g. by a foreign script). */
         if (!source.disabled) $(this)[0].disabled = false;
         $(".cascade-loading").remove();
