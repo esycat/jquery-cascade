@@ -82,7 +82,7 @@
                     if (list.length) {
                         self.html(list);
 
-                        if (curVal != null) self.val(curVal);
+                        if (source.val().length) self.val(curVal);
                     }
 
                     self.trigger("loaded.cascade", [source[0]]); // be sure to fire even if there is no data
