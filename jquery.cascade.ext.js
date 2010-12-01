@@ -40,8 +40,8 @@
     };
 
     $.ui.cascade.ext.templateText = function(opt) {
-    var template = $.makeTemplate(opt.templateText, "<%", "%>");
-    return { template: function(obj) { return template(obj); } };
+        var template = $.makeTemplate(opt.templateText, "<%", "%>");
+        return { template: function(obj) { return template(obj); } };
     };
 
     /*these events are bound on every instance...so the indicator appears  on each target */
@@ -50,17 +50,21 @@
     */
     $.ui.cascade.event.loading = function(e, source) {
         $(this).empty();
+
         var position = {
-            'z-index': '6000',
+            'z-index':  '6000',
             'position': 'absolute',
-            'width': '16px'
+            'width':    '16px'
         };
         $.extend(position, $(this).offset());
-        position.top = position.top + 3;
-        position.left = position.left + 3;
+        position.top  += 3;
+        position.left += 3;
+
         $("<div class='cascade-loading'>&nbsp;</div>").appendTo("body").css(position);
+
         $(this)[0].disabled = true;
     };
+
     $.ui.cascade.event.loaded = function(e, source) {
         /* Re-enable the dropdown, but only if the parent is not disabled (e.g. by a foreign script). */
         if (!source.disabled) $(this)[0].disabled = false;
