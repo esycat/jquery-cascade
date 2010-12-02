@@ -26,9 +26,9 @@
             var _ajax = {};
             var $this = $(this); // child element
             var defaultAjaxOptions = {
-                type: "GET",
-                dataType: "json",
-                success: function(json) { $this.trigger("updateList", [json]); },
+                type: 'GET',
+                dataType: 'json',
+                success: function(json) { $this.trigger('updateList', [json]); },
                 data: $.extend(_ajax.data, ajax.data, { val: opt.getParentValue(parent) })
             };
             // overwrite opt.ajax with required props (json, successcallback, data)
@@ -40,7 +40,7 @@
     };
 
     $.ui.cascade.ext.templateText = function(opt) {
-        var template = $.makeTemplate(opt.templateText, "<%", "%>");
+        var template = $.makeTemplate(opt.templateText, '<%', '%>');
         return { template: function(obj) { return template(obj); } };
     };
 
@@ -60,7 +60,7 @@
         position.top  += 3;
         position.left += 3;
 
-        $("<div class='cascade-loading'>&nbsp;</div>").appendTo("body").css(position);
+        $('<div class="cascade-loading">&nbsp;</div>').appendTo('body').css(position);
 
         $(this)[0].disabled = true;
     };
@@ -68,7 +68,7 @@
     $.ui.cascade.event.loaded = function(e, source) {
         /* Re-enable the dropdown, but only if the parent is not disabled (e.g. by a foreign script). */
         if (!source.disabled) $(this)[0].disabled = false;
-        $(".cascade-loading").remove();
+        $('.cascade-loading').remove();
     };
 
 })(jQuery);

@@ -29,8 +29,8 @@
         opt = $.extend({}, {
             list: [], // static list to use as datasource
             timeout: 10, // delay before firing getList operation
-            getList: function(select) { $(this).trigger("updateList", [opt.list]); }, // function to fetch datasource
-            template: function(item) { return "<option value='" + item.value + "'>" + item.text + "</option>"; }, // applied to each item in datasource
+            getList: function(select) { $(this).trigger('updateList', [opt.list]); }, // function to fetch datasource
+            template: function(item) { return '<option value="' + item.value + '">' + item.text + '</option>'; }, // applied to each item in datasource
             match: function(selectedValue) { return this.when == selectedValue; }, // 'this' is the js object, or the current list item from 'getList'
             event: 'change.' + namespace, // event to listen on parent which fires the cascade
             getParentValue: function(parent) { return $(parent).val(); } // delegate for retrieving the parent element's value
@@ -68,10 +68,10 @@
 
                 self.trigger('loading.' + namespace, [source[0]]);
 
-                var selectTimeout = $.data(self, "selectTimeout");
+                var selectTimeout = $.data(self, 'selectTimeout');
                 if (selectTimeout) { window.clearInterval(selectTimeout); }
 
-                $.data(self, "selectTimeout", window.setTimeout(function() {
+                $.data(self, 'selectTimeout', window.setTimeout(function() {
                     self.trigger(namespace, [parents]);
                 }, opt.timeout));
             });
@@ -79,7 +79,7 @@
             self.bind(namespace, function(event, parents) {
                 parents.push(source[0]); // add current parent (source) on stack
 
-                self.one("updateList", function(event, list) {
+                self.one('updateList', function(event, list) {
                     list = $(list)
                         .filter(function() {
                             return opt.match.call(this, opt.getParentValue(parent));
@@ -98,10 +98,10 @@
                         if (source.val().length) self.val(curVal);
                     }
 
-                    self.trigger("loaded." + namespace, [source[0]]); // be sure to fire even if there is no data
+                    self.trigger('loaded.' + namespace, [source[0]]); // be sure to fire even if there is no data
 
                     // opinionated, but enables cascading from this element as well
-                    if (self.is(":input")) self.trigger("change." + namespace, [parents]);
+                    if (self.is(':input')) self.trigger('change.' + namespace, [parents]);
                 });
 
                 opt.getList.call(self[0], source); // call with child element as this
