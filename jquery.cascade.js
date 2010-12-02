@@ -16,10 +16,14 @@
 ;(function($) {
     $.ui = $.ui || {}; $.ui.cascade = $.ui.cascade || {};
 
+    $.ui.cascade.namespace = 'cascade';
+
     $.fn.cascade = function(parent, opt) {
+        var namespace = $.ui.cascade.namespace;
+
         if (opt.event) {
             // namespace our event
-            //opt.event = opt.event.replace('.cascade', '') + '.cascade';
+            opt.event = opt.event.replace('.' + namespace, '') + '.' + namespace;
         }
 
         opt = $.extend({}, {
@@ -28,15 +32,15 @@
             getList: function(select) { $(this).trigger("updateList", [opt.list]); }, // function to fetch datasource
             template: function(item) { return "<option value='" + item.value + "'>" + item.text + "</option>"; }, // applied to each item in datasource
             match: function(selectedValue) { return this.when == selectedValue; }, // 'this' is the js object, or the current list item from 'getList'
-            event: "change", // event to listen on parent which fires the cascade
+            event: 'change.' + namespace, // event to listen on parent which fires the cascade
             getParentValue: function(parent) { return $(parent).val(); } // delegate for retrieving the parent element's value
         }, opt);
 
         if ($.ui.cascade.ext) {
             for(var ext in $.ui.cascade.ext) {
                 if (opt[ext]) {
-                opt = $.extend(opt, $.ui.cascade.ext[ext](opt));
-                delete opt[ext];
+                    opt = $.extend(opt, $.ui.cascade.ext[ext](opt));
+                    delete opt[ext];
                 }
             }
         }
@@ -49,25 +53,33 @@
             // bind any events in extensions to each instance
             if ($.ui.cascade.event) {
                 for(var e in $.ui.cascade.event) {
-                    self.bind(e + ".cascade", [source], $.ui.cascade.event[e]);
+                    self.bind(e + '.' + namespace, [source], $.ui.cascade.event[e]);
                 }
             }
 
-            $(source).bind(opt.event, function() {
+            $(source).bind(opt.event, function(event, parents) {
+                // Do not propgagate if current element is one of the previous parents.
+                // This prevents infinite loop for interdependent dropdowns.
+                parents = parents || [];
+                if (parents.indexOf(self[0]) != -1) return false;
+
                 // store current value first of all, even loading event can modify the select element
                 curVal = self.val();
 
-                self.trigger("loading.cascade", [source[0]]);
+                self.trigger('loading.' + namespace, [source[0]]);
 
                 var selectTimeout = $.data(self, "selectTimeout");
                 if (selectTimeout) { window.clearInterval(selectTimeout); }
+
                 $.data(self, "selectTimeout", window.setTimeout(function() {
-                        self.trigger("cascade");
+                    self.trigger(namespace, [parents]);
                 }, opt.timeout));
             });
 
-            self.bind("cascade", function() {
-                self.one("updateList", function(e, list) {
+            self.bind(namespace, function(event, parents) {
+                parents.push(source[0]); // add current parent (source) on stack
+
+                self.one("updateList", function(event, list) {
                     list = $(list)
                         .filter(function() {
                             return opt.match.call(this, opt.getParentValue(parent));
@@ -82,14 +94,14 @@
                     if (list.length) {
                         self.html(list);
 
+                        // restore original value if possible and if parent's value is not null
                         if (source.val().length) self.val(curVal);
                     }
 
-                    self.trigger("loaded.cascade", [source[0]]); // be sure to fire even if there is no data
+                    self.trigger("loaded." + namespace, [source[0]]); // be sure to fire even if there is no data
 
-                    if (self.is(":input")) { // opinionated, but enables cascading from this element as well
-                        self.trigger("change.cascade");
-                    }
+                    // opinionated, but enables cascading from this element as well
+                    if (self.is(":input")) self.trigger("change." + namespace, [parents]);
                 });
 
                 opt.getList.call(self[0], source); // call with child element as this
