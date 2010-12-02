@@ -61,7 +61,7 @@
                 // Do not propgagate if current element is one of the previous parents.
                 // This prevents infinite loop for interdependent dropdowns.
                 parents = parents || [];
-                if (parents.indexOf(self[0]) != -1) return false;
+                if ($.inArray(self[0], parents) != -1) return false;
 
                 // store current value first of all, even loading event can modify the select element
                 curVal = self.val();
