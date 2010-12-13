@@ -91,12 +91,8 @@
 
                     self.empty(); // clear the source/select
 
-                    if (list.length) {
-                        self.html(list);
-
-                        // restore original value if possible and if parent's value is not null
-                        if (source.val().length) self.val(curVal);
-                    }
+                    if (list.length) self.html(list);
+                    if (curVal != null) self.val(curVal); // restore original value if possible and if parent's value is not null
 
                     self.trigger('loaded.' + namespace, [source[0]]); // be sure to fire even if there is no data
 
