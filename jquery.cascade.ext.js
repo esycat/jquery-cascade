@@ -49,8 +49,6 @@
     * CSS: .cascade-loading: { background: transparent url("${staticDir}/Content/images/indicator.gif") no-repeat center; }
     */
     $.ui.cascade.event.loading = function(e, source) {
-        $(this).empty();
-
         var position = {
             'z-index':  '6000',
             'position': 'absolute',
@@ -60,7 +58,7 @@
         position.top  += 3;
         position.left += 3;
 
-        $('<div class="cascade-loading">&nbsp;</div>').appendTo('body').css(position);
+        $('<div />').attr('class', 'cascade-loading').css(position).appendTo('body');
 
         $(this)[0].disabled = true;
     };

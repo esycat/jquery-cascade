@@ -37,7 +37,7 @@
         }, opt);
 
         if ($.ui.cascade.ext) {
-            for(var ext in $.ui.cascade.ext) {
+            for (var ext in $.ui.cascade.ext) {
                 if (opt[ext]) {
                     opt = $.extend(opt, $.ui.cascade.ext[ext](opt));
                     delete opt[ext];
@@ -57,11 +57,13 @@
                 }
             }
 
-            $(source).bind(opt.event, function(event, parents) {
+            $(source).bind(opt.event, function(event, chain) {
                 // Do not propgagate if current element is one of the previous parents.
                 // This prevents infinite loop for interdependent dropdowns.
-                parents = parents || [];
-                if ($.inArray(self[0], parents) != -1) return false;
+                chain = chain || [];
+
+                if ($.inArray(self[0], chain) != -1) return false;
+                chain.push(this); // add current element on stack
 
                 // store current value first of all, even loading event can modify the select element
                 curVal = self.val();
@@ -72,12 +74,15 @@
                 if (selectTimeout) { window.clearInterval(selectTimeout); }
 
                 $.data(self, 'selectTimeout', window.setTimeout(function() {
-                    self.trigger(namespace, [parents]);
+                    self.trigger(namespace, [chain]);
                 }, opt.timeout));
             });
 
-            self.bind(namespace, function(event, parents) {
-                parents.push(source[0]); // add current parent (source) on stack
+            self.bind(namespace, function(event, chain) {
+                // In case if a dropdown participates in multiple cascades,
+                // this event can be falsely fired multiple times.
+                // Check for proper parent on the stack to prevent triggering.
+                if (chain && $.inArray(source[0], chain) == -1) return false;
 
                 self.one('updateList', function(event, list) {
                     list = $(list)
@@ -85,24 +90,23 @@
                             return opt.match.call(this, opt.getParentValue(parent));
                         })
                         .map(function() {
-                            var node = $(opt.template(this))[0];
-                            return node;
+                            return $(opt.template(this))[0];
                         });
 
                     self.empty(); // clear the source/select
-
                     if (list.length) self.html(list);
                     if (curVal != null) self.val(curVal); // restore original value if possible and if parent's value is not null
 
                     self.trigger('loaded.' + namespace, [source[0]]); // be sure to fire even if there is no data
 
                     // opinionated, but enables cascading from this element as well
-                    if (self.is(':input')) self.trigger('change.' + namespace, [parents]);
+                    if (self.is(':input')) self.trigger('change.' + namespace, [chain]);
                 });
 
                 opt.getList.call(self[0], source); // call with child element as this
             });
         });
+
     };
 
 })(jQuery);
