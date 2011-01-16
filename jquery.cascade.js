@@ -4,7 +4,7 @@
  *
  * Adapted from Yehuda Katz, Rein Henrichs autocomplete plugin.
  *
- * @version: 1.3 (2010-12-02)
+ * @version: 1.3.2 (2011-01-17)
  * @requires: jQuery v1.3 or later
  * @license: http://www.opensource.org/licenses/mit-license.php
  * @license: http://www.gnu.org/licenses/gpl.html

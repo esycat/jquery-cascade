@@ -5,8 +5,9 @@
  * Adapted from Yehuda Katz, Rein Henrichs autocomplete plugin.
  * Depends on templating  plugin if using with templateText.
  *
- * @version: 1.3 (2010-12-02)
+ * @version: 1.3.2 (2011-01-17)
  * @requires: jQuery v1.3 or later
+ * @required: jQuery.data plugin
  * @license: http://www.opensource.org/licenses/mit-license.php
  * @license: http://www.gnu.org/licenses/gpl.html
  * @copyright 2008 Mike Nichols
@@ -60,12 +61,17 @@
 
         $('<div />').attr('class', 'cascade-loading').css(position).appendTo('body');
 
-        $(this)[0].disabled = true;
+        // Temporary disable the field, and store original value.
+        $(this).data('cascade.disabled', this.disabled);
+        this.disabled = true;
     };
 
     $.ui.cascade.event.loaded = function(e, source) {
         /* Re-enable the dropdown, but only if the parent is not disabled (e.g. by a foreign script). */
-        if (!source.disabled) $(this)[0].disabled = false;
+        if ($(this).data('cascade.disabled') !== undefined && !source.disabled) {
+            this.disabled = $(this).data('cascade.disabled');
+        }
+
         $('.cascade-loading').remove();
     };
 
