@@ -53,7 +53,7 @@
             // bind any events in extensions to each instance
             if ($.ui.cascade.event) {
                 for(var e in $.ui.cascade.event) {
-                    self.bind(e + '.' + namespace, [source], $.ui.cascade.event[e]);
+                    self.bind(e + '.' + namespace, { source: source[0] }, $.ui.cascade.event[e]);
                 }
             }
 

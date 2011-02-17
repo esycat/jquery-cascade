@@ -50,6 +50,9 @@
     * CSS: .cascade-loading: { background: transparent url("${staticDir}/Content/images/indicator.gif") no-repeat center; }
     */
     $.ui.cascade.event.loading = function(e, source) {
+        /* Compare "runtime" parent with "bind-time" parent to prevent false triggering. */
+        if (source != e.data.source) return false;
+
         var position = {
             'z-index':  '6000',
             'position': 'absolute',
@@ -67,6 +70,9 @@
     };
 
     $.ui.cascade.event.loaded = function(e, source) {
+        /* Compare "runtime" parent with "bind-time" parent to prevent false triggering. */
+        if (source != e.data.source) return false;
+
         /* Re-enable the dropdown, but only if the parent is not disabled (e.g. by a foreign script). */
         if ($(this).data('cascade.disabled') !== undefined && !source.disabled) {
             this.disabled = $(this).data('cascade.disabled');
